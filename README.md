@@ -11,7 +11,7 @@ Art credits:
  - Hadenewell
  - Loboto
  - Jortsmima
- - Citric
+ - CitricComics
  - Kermrade
  - Kami
  - Kazaxc
