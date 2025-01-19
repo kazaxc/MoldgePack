@@ -84,6 +84,34 @@ SMODS.Atlas{
     py = 188 -- height of one cards
 }
 
+SMODS.Atlas{
+    key = 'ving', -- atlas key
+    path = 'ving.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'ethan', -- atlas key
+    path = 'ethan.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'ben', -- atlas key
+    path = 'ben.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'eepy', -- atlas key
+    path = 'eepy.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Joker{
     key = 'appulrelia', -- joker key
     loc_txt = { -- local text
@@ -101,7 +129,7 @@ SMODS.Joker{
     discovered = true,
     blueprint_compat = true,
     pos = { x = 0, y = 0 },
-    cost = 8,
+    cost = 6,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.chips, card.ability.extra.chip_gain } }
@@ -129,7 +157,7 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'What Time is Movie Night',
         text = {
-            'This card gains {X:mult,C:white} X#2# {} Mult',
+            'Gains {X:mult,C:white} X#2# {} Mult',
             'for each scored {C:attention}7{} and {C:attention}9{}',
             '{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)'
         }
@@ -183,7 +211,7 @@ SMODS.Joker{
     discovered = true,
     blueprint_compat = true,
     pos = { x = 0, y = 0 },
-    cost = 8,
+    cost = 5,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.Xmult, (G.GAME.probabilities.normal or 1), card.ability.extra.odds } }
@@ -266,7 +294,7 @@ SMODS.Joker{
     discovered = true,
     blueprint_compat = true,
     pos = { x = 0, y = 0 },
-    cost = 6,
+    cost = 7,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = {card.ability.extra.chips} }
@@ -299,7 +327,7 @@ SMODS.Joker{
     },
     config = { extra = { mult = 0, mult_gain = 2} },
     pos = { x = 0, y = 0},
-    cost = 10,
+    cost = 8,
     rarity = 1,
     atlas = 'BackHouse',
     unlocked = true,
@@ -332,7 +360,7 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'The Jortster',
         text = {
-            'This Joker gains {C:chips}+#2#{} Chips',
+            'Gains {C:chips}+#2#{} Chips',
             'if played hand has',
             ' exactly {C:attention}2{} cards',
             '{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)',
@@ -432,7 +460,7 @@ SMODS.Joker{
     discovered = true,
     blueprint_compat = true,
     pos = { x = 0, y = 0 },
-    cost = 10,
+    cost = 4,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.mult } }
@@ -473,6 +501,198 @@ SMODS.Joker{
             return {
                 dollars = card.ability.extra.money
             }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'vingJoker', -- joker key
+    loc_txt = { -- local text
+        name = 'Ving Rhames',
+        text = {
+            'Debuffed at start of blind until',
+            '{C:attention}Tom Cruise{} joker is owned',
+            'Gains {X:mult,C:white} X Mult {} equal to',
+            'heighest scored card divided by 10',
+            '{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)'
+        }
+    },
+    config = { extra = { Xmult = 1 } },
+    rarity = 3,
+    atlas = 'ving',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult } }
+    end,
+    calculate = function (self, card, context)
+
+        if context.setting_blind then
+            if next(SMODS.find_card('j_mldg_ethan')) then
+                card:set_debuff(false)
+            else
+                card:set_debuff(true)
+            end
+        end
+
+        if context.joker_main then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.Xmult } }
+            }
+        end
+
+        if context.before and not context.blueprint then
+            local heighest = 0.0
+            for i = 1, #context.scoring_hand do
+                local cardScore = context.scoring_hand[i]:get_id() / 10
+                if cardScore > heighest then heighest = cardScore end
+            end
+            card.ability.extra.Xmult = card.ability.extra.Xmult + heighest
+            return {
+                message = 'Ethan???',
+                colour = G.C.MULT,
+                card = card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'ethan', -- joker key
+    loc_txt = { -- local text
+        name = 'Tom Cruise',
+        text = {
+            'Earn {C:money}$#1#{} at',
+            'end of round',
+            'Helps his friends :)'
+        }
+    },
+    config = { extra = { money = 10 } },
+    rarity = 1,
+    atlas = 'ethan',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    pos = { x = 0, y = 0 },
+    cost = 12,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.money } }
+    end,
+    calc_dollar_bonus = function(self, card)
+        local bonus = card.ability.extra.money
+        if bonus > 0 then return bonus end
+    end
+}
+
+SMODS.Joker{
+    key = 'ben10', -- joker key
+    loc_txt = { -- local text
+        name = 'Ben 10',
+        text = {
+            "{X:mult,C:white} X#1# {} Mult",
+            "{C:green}#2# in #3#{} chance this",
+            "card is destroyed",
+            "at end of round"
+        }
+    },
+    config = { extra = { Xmult = 10, odds = 10 } },
+    rarity = 1,
+    atlas = 'ben',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult, (G.GAME.probabilities.normal or 1), card.ability.extra.odds } }
+    end,
+    calculate = function(self, card, context)
+        if context.joker_main then
+          return {
+            message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
+            Xmult_mod = card.ability.extra.Xmult
+          }
+        end
+
+        if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
+          if pseudorandom('ben10') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            G.E_MANAGER:add_event(Event({
+              func = function()
+                play_sound('tarot1')
+                card.T.r = -0.2
+                card:juice_up(0.3, 0.4)
+                card.states.drag.is = true
+                card.children.center.pinch.x = true
+                G.E_MANAGER:add_event(Event({
+                  trigger = 'after',
+                  delay = 0.3,
+                  blockable = false,
+                  func = function()
+                    G.jokers:remove_card(card)
+                    card:remove()
+                    card = nil
+                    return true;
+                  end
+                }))
+                return true
+              end
+            }))
+            return {
+              message = 'NO MY MENTAL!'
+            }
+          else
+            return {
+              message = 'Its Hero Time!'
+            }
+          end
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'eepy', -- joker key
+    loc_txt = { -- local text
+        name = 'Gods Eepiest Solider',
+        text = {
+            "Creates a {C:purple}Tartot{} card",
+            "if played hand",
+            "contains a {C:attention}Full House{}",
+            "and a {C:attention}Face{} card"
+        }
+    },
+    config = { extra = {} },
+    rarity = 1,
+    atlas = 'eepy',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = false,
+    pos = { x = 0, y = 0 },
+    cost = 4,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = {} }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main and context.poker_hands['Full House'] then
+            local face = false
+            for i = 1, #context.scoring_hand do
+                if context.scoring_hand[i]:is_face() then face = true end
+            end
+            if face and not (context.blueprint_card or self).getting_sliced and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit then
+                local new_card = create_card('Tarot',G.consumeables, nil, nil, nil, nil, nil, 'car')
+                new_card:add_to_deck()
+                G.consumeables:emplace(new_card)
+                return {
+                    message = 'HONK SHOO!'
+                }
+            end
         end
     end
 }
