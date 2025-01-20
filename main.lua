@@ -112,6 +112,13 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'euroTruck', -- atlas key
+    path = 'eurotruck.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Joker{
     key = 'appulrelia', -- joker key
     loc_txt = { -- local text
@@ -128,6 +135,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 6,
     isActive = true,
@@ -168,6 +176,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 8,
     isActive = true,
@@ -210,6 +219,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 5,
     isActive = true,
@@ -249,6 +259,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = false,
+    allow_duplicates = false,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
     end,
@@ -293,6 +304,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 7,
     isActive = true,
@@ -333,6 +345,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = false,
+    allow_duplicates = false,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
     end,
@@ -374,6 +387,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.chips, card.ability.extra.chip_gain } }
     end,
@@ -414,6 +428,54 @@ SMODS.Joker{
 }
 
 SMODS.Joker{
+    key = 'EuroTruck', -- joker key
+    loc_txt = { -- local text
+        name = 'Euro Truck Simulator',
+        text = {
+            'Difference beetwen {C:attention}highest{} scoring card and',
+            '{C:attention}lowest{} card held in hand',
+            'is doubled and added to mult'
+        }
+    },
+    config = { extra = { mult = 0 } },
+    rarity = 1,
+    atlas = 'euroTruck',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 6,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.mult } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            local lowest = 14
+            local highest = 0
+
+            for i = 1, #context.scoring_hand do
+                local cardScore = context.scoring_hand[i]:get_id()
+                if cardScore > highest then highest = cardScore end
+            end
+
+            for i = 1, #G.hand.cards do
+                local cardScore = G.hand.cards[i]:get_id()
+                if cardScore < lowest then lowest = cardScore end
+            end
+
+            card.ability.extra.mult = ((highest - lowest) * 2)
+
+            return {
+                mult_mod = card.ability.extra.mult,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
+            }
+        end
+    end
+}
+
+SMODS.Joker{
     key = 'moldgeMaster', -- joker key
     loc_txt = { -- local text
         name = 'Master of the Moldge',
@@ -429,6 +491,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = false,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 6,
     isActive = true,
@@ -459,6 +522,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 4,
     isActive = true,
@@ -490,6 +554,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
     isActive = true,
@@ -523,6 +588,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
     isActive = true,
@@ -578,6 +644,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 12,
     isActive = true,
@@ -607,6 +674,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = true,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
     isActive = true,
@@ -673,6 +741,7 @@ SMODS.Joker{
     unlocked = true,
     discovered = true,
     blueprint_compat = false,
+    allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 4,
     isActive = true,
