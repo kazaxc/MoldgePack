@@ -119,6 +119,20 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'badger', -- atlas key
+    path = 'Badger.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'creation', -- atlas key
+    path = 'Creation.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Joker{
     key = 'appulrelia', -- joker key
     loc_txt = { -- local text
@@ -163,7 +177,7 @@ SMODS.Joker{
 SMODS.Joker{
     key = 'MovieNight', -- joker key
     loc_txt = { -- local text
-        name = 'What Time is Movie Night',
+        name = 'What Time is Movie Night?',
         text = {
             'Gains {X:mult,C:white} X#2# {} Mult',
             'for each scored {C:attention}7{} and {C:attention}9{}',
@@ -306,7 +320,7 @@ SMODS.Joker{
     blueprint_compat = true,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
-    cost = 7,
+    cost = 5,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = {card.ability.extra.chips} }
@@ -432,9 +446,11 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'Euro Truck Simulator',
         text = {
-            'Difference beetwen {C:attention}highest{} scoring card and',
-            '{C:attention}lowest{} card held in hand',
-            'is doubled and added to mult'
+            'Adds {C:attention}Double{} the diffenence',
+            'in rank between the',
+            '{C:attention}Highest{} scoring card',
+            'and {C:attention}Lowest{} card',
+            'held in hand to Mult'
         }
     },
     config = { extra = { mult = 0 } },
@@ -503,6 +519,9 @@ SMODS.Joker{
             for _,v in ipairs(context.scoring_hand) do
                 v:set_ability(G.P_CENTERS['m_mldg_moldge'])
             end
+            return {
+                card = card
+            }
         end
     end
 }
@@ -516,7 +535,7 @@ SMODS.Joker{
             'give {C:mult}+#1#{} Mult when scored'
         }
     },
-    config = { extra = { mult = 8 } },
+    config = { extra = { mult = 8, focus = card } },
     rarity = 1,
     atlas = 'dennis',
     unlocked = true,
@@ -533,7 +552,8 @@ SMODS.Joker{
         if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
             return {
                 mult_mod = card.ability.extra.mult,
-                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } },
+                card = card
             }
         end
     end
@@ -548,7 +568,7 @@ SMODS.Joker{
             'played {C:attention}Moldge{} card',
         }
     },
-    config = { extra = { money = 5 } },
+    config = { extra = { money = 5, focus = card } },
     rarity = 1,
     atlas = 'RainJoker',
     unlocked = true,
@@ -564,7 +584,8 @@ SMODS.Joker{
     calculate = function (self, card, context)
         if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
             return {
-                dollars = card.ability.extra.money
+                dollars = card.ability.extra.money,
+                card = card
             }
         end
     end
@@ -669,7 +690,7 @@ SMODS.Joker{
         }
     },
     config = { extra = { Xmult = 10, odds = 10 } },
-    rarity = 1,
+    rarity = 3,
     atlas = 'ben',
     unlocked = true,
     discovered = true,
@@ -729,7 +750,7 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'Gods Eepiest Solider',
         text = {
-            "Creates a {C:purple}Tartot{} card",
+            "Creates a {C:purple}Tarot{} card",
             "if played hand",
             "contains a {C:attention}Full House{}",
             "and a {C:attention}Face{} card"
@@ -762,6 +783,77 @@ SMODS.Joker{
                     message = 'HONK SHOO!'
                 }
             end
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'badgerArtist', -- joker key
+    loc_txt = { -- local text
+        name = 'The Artist',
+        text = {
+            '{C:green}#1# in #2#{} chance',
+            'scored cards',
+            'become {C:attention}Wild{}'
+        }
+    },
+    config = { extra = { odds = 2 } },
+    rarity = 1,
+    atlas = 'badger',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = false,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 5,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { (G.GAME.probabilities.normal or 1), card.ability.extra.odds } }
+    end,
+    calculate = function (self, card, context)
+        if context.individual and context.cardarea == G.play and not context.blueprint then
+            for _,v in ipairs(context.scoring_hand) do
+                if pseudorandom('badgerArtist') > G.GAME.probabilities.normal / card.ability.extra.odds then
+                    v:set_ability(G.P_CENTERS['m_wild'])
+                end
+            end
+            return {
+                card = card
+            }
+        end
+    end
+}
+
+SMODS.Consumable{
+    key = 'creation', -- consumeable key
+    set = 'Tarot', -- consumable set
+    loc_txt = { -- local text
+        name = 'Creation',
+        text = {
+            'Convert up to {C:attention}#1#{} selected cards',
+            'to {C:attention}Moldge{} cards'
+        }
+    },
+    config = { extra = { cards = 2 } },
+    atlas = 'creation',
+    pos = { x = 0, y = 0 },
+    cost = 3,
+    unlocked = true,
+    discovered = true,
+    loc_vars = function(self,info_queue, center)
+        return {vars = {center.ability.extra.cards}}
+    end,
+    can_use = function(self,card)
+        if G and G.hand then
+            if #G.hand.highlighted ~= 0 and #G.hand.highlighted <= card.ability.extra.cards then
+                return true
+            end
+        end
+        return false
+    end,
+    use = function(self,card,area,copier)
+        for i = 1, #G.hand.highlighted do
+            G.hand.highlighted[i]:set_ability(G.P_CENTERS['m_mldg_moldge'])
         end
     end
 }
