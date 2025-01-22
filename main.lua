@@ -204,7 +204,7 @@ SMODS.Joker{
                 message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } }
             }
         end
-        if context.individual and context.cardarea == G.play then
+        if context.individual and context.cardarea == G.play and not context.blueprint then
             if context.other_card:get_id() == 7 or context.other_card:get_id() == 9 then
                 card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
                 return {
@@ -412,7 +412,7 @@ SMODS.Joker{
                 message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } }
             }
         end
-        if context.before and #context.full_hand == 2 then
+        if context.before and #context.full_hand == 2 and not context.blueprint then
             card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chip_gain
             return {
                 message = 'Jorts!',
@@ -515,7 +515,7 @@ SMODS.Joker{
         return { vars = {} }
     end,
     calculate = function (self, card, context)
-        if context.individual and context.cardarea == G.play then
+        if context.individual and context.cardarea == G.play and not context.blueprint then
             for _,v in ipairs(context.scoring_hand) do
                 v:set_ability(G.P_CENTERS['m_mldg_moldge'])
             end
