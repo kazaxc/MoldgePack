@@ -770,7 +770,7 @@ SMODS.Joker{
         return { vars = {} }
     end,
     calculate = function (self, card, context)
-        if context.joker_main and context.poker_hands['Full House'] then
+        if context.before and next(context.poker_hands['Full House']) then
             local face = false
             for i = 1, #context.scoring_hand do
                 if context.scoring_hand[i]:is_face() then face = true end
