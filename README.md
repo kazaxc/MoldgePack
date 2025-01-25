@@ -16,3 +16,6 @@ Art credits:
  - Kermrade
  - Kami
  - Kazaxc
+
+Extra credit:
+Balatro official discord modding-dev chat users

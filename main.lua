@@ -80,8 +80,8 @@ SMODS.Atlas{
 SMODS.Atlas{
     key = 'RainJoker', -- atlas key
     path = 'RainJoker.png', -- path to the image
-    px = 140, -- width of one card
-    py = 188 -- height of one cards
+    px = 71, -- width of one card
+    py = 95 -- height of one cards
 }
 
 SMODS.Atlas{
@@ -131,6 +131,58 @@ SMODS.Atlas{
     path = 'Creation.png', -- path to the image
     px = 71,
     py = 95
+}
+
+SMODS.Atlas{
+    key = 'sucker', -- atlas key
+    path = 'Sucker.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'gulper', -- atlas key
+    path = 'Gulper.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'ricksCrayon', -- atlas key
+    path = 'RicksCrayon.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'ricksCrayonStash', -- atlas key
+    path = 'RicksCrayonStash.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'hotTake', -- atlas key
+    path = 'hotTake.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'fox', -- atlas key
+    path = 'fox.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Sound{
+    key = 'hiMark', -- sound key
+    path = 'hi.ogg' -- path to the sound
+}
+
+SMODS.Sound{
+    key = 'glassBreak', -- sound key
+    path = 'glass.ogg' -- path to the sound
 }
 
 SMODS.Joker{
@@ -284,7 +336,7 @@ SMODS.Joker{
                 message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
             }
         end
-        
+
         if context.before and next(context.poker_hands['Pair']) and not context.blueprint then
             local hearts = 0
             for i = 1, #context.scoring_hand do
@@ -664,7 +716,7 @@ SMODS.Joker{
     atlas = 'ethan',
     unlocked = true,
     discovered = true,
-    blueprint_compat = true,
+    blueprint_compat = false,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 12,
@@ -780,7 +832,8 @@ SMODS.Joker{
                 new_card:add_to_deck()
                 G.consumeables:emplace(new_card)
                 return {
-                    message = 'HONK SHOO!'
+                    message = 'HONK SHOO!',
+                    sound = 'mldg_glassBreak'
                 }
             end
         end
@@ -797,7 +850,7 @@ SMODS.Joker{
             'become {C:attention}Wild{}'
         }
     },
-    config = { extra = { odds = 2 } },
+    config = { extra = { odds = 2, focus = card } },
     rarity = 1,
     atlas = 'badger',
     unlocked = true,
@@ -854,6 +907,322 @@ SMODS.Consumable{
     use = function(self,card,area,copier)
         for i = 1, #G.hand.highlighted do
             G.hand.highlighted[i]:set_ability(G.P_CENTERS['m_mldg_moldge'])
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'sucker', -- joker key
+    loc_txt = { -- local text
+        name = 'Sucker',
+        text = {
+            'If {C:attention}first discard{} of round',
+            'has only {C:attention}1{} card, destroy',
+            'it and this card gains {X:mult,C:white} X #2# {} Mult',
+            '{C:inactive}(Currently {X:mult,C:white} X #1# {C:inactive} Mult)'
+        }
+    },
+    config = { extra = { Xmult = 1, Xmult_gain = 0.1, focus = card } },
+    rarity = 1,
+    atlas = 'sucker',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 5,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.Xmult } }
+            }
+        end
+        if context.discard and #context.full_hand == 1 and G.GAME.current_round.discards_used == 0 and not context.blueprint then
+            card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+            return {
+                message = 'SLURP!',
+                colour = G.C.MULT,
+                remove = true,
+                card = card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'gulper', -- joker key
+    loc_txt = { -- local text
+        name = 'Gulper',
+        text = {
+            'If {C:attention}first discard{} of round',
+            'has only {C:attention}1{} card, destroy',
+            'it and this card gains Chips equal to',
+            'the value of the destroyed card',
+            '{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)'
+        }
+    },
+    config = { extra = { chips = 1, focus = card } },
+    rarity = 1,
+    atlas = 'gulper',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 6,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.chips } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } },
+                chip_mod = card.ability.extra.chips
+            }
+        end
+        if context.discard and #context.full_hand == 1 and G.GAME.current_round.discards_used == 0 and not context.blueprint then
+            card.ability.extra.chips = card.ability.extra.chips + context.full_hand[1]:get_id()
+            return {
+                message = 'GULP!',
+                colour = G.C.CHIPS,
+                remove = true,
+                card = card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'ricksCrayon', -- joker key
+    loc_txt = {
+        name = 'Rick\'s Crayon',
+        text = {
+          "{C:mult}+#1#{} Mult",
+          "{C:green}#2# in #3#{} chance this",
+          "card is destroyed",
+          "at end of round"
+        }
+      },
+      -- This searches G.GAME.pool_flags to see if Gros Michel went extinct. If so, no longer shows up in the shop.
+      no_pool_flag = 'ricksCrayon_extinct',
+      config = { extra = { mult = 25, odds = 6 } },
+      rarity = 1,
+      atlas = 'ricksCrayon',
+      pos = { x = 0, y = 0 },
+      cost = 5,
+      -- Gros Michel is incompatible with the eternal sticker, so this makes sure it can't be eternal.
+      unlocked = true,
+      discovered = true,
+      eternal_compat = false,
+      loc_vars = function(self, info_queue, card)
+        return { vars = { card.ability.extra.mult, (G.GAME.probabilities.normal or 1), card.ability.extra.odds } }
+      end,
+      calculate = function(self, card, context)
+        if context.joker_main then
+          return {
+            mult_mod = card.ability.extra.mult,
+            message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
+          }
+        end
+    
+        -- Checks to see if it's end of round, and if context.game_over is false.
+        -- Also, not context.repetition ensures it doesn't get called during repetitions.
+        if context.end_of_round and not context.repetition and context.game_over == false and not context.blueprint then
+          -- Another pseudorandom thing, randomly generates a decimal between 0 and 1, so effectively a random percentage.
+          if pseudorandom('gros_michel2') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            -- This part plays the animation.
+            G.E_MANAGER:add_event(Event({
+              func = function()
+                play_sound('tarot1')
+                card.T.r = -0.2
+                card:juice_up(0.3, 0.4)
+                card.states.drag.is = true
+                card.children.center.pinch.x = true
+                -- This part destroys the card.
+                G.E_MANAGER:add_event(Event({
+                  trigger = 'after',
+                  delay = 0.3,
+                  blockable = false,
+                  func = function()
+                    G.jokers:remove_card(card)
+                    card:remove()
+                    card = nil
+                    return true;
+                  end
+                }))
+                return true
+              end
+            }))
+            -- Sets the pool flag to true, meaning Gros Michel 2 doesn't spawn, and Cavendish 2 does.
+            G.GAME.pool_flags.gros_michel_extinct2 = true
+            return {
+              message = 'SIGH!'
+            }
+          else
+            return {
+              message = 'Safe!'
+            }
+          end
+        end
+      end
+}
+
+SMODS.Joker{
+    key = 'ricksCrayonStash',
+    loc_txt = {
+        name = 'Rick\'s Crayon Stash',
+        text = {
+        "{X:mult,C:white} X#1# {} Mult",
+        "{C:green}#2# in #3#{} chance this",
+        "card is destroyed",
+        "at end of round"
+        }
+    },
+    -- This also searches G.GAME.pool_flags to see if Gros Michel went extinct. If so, enables the ability to show up in shop.
+    yes_pool_flag = 'ricksCrayon_extinct',
+    config = { extra = { Xmult = 5, odds = 1000 } },
+    rarity = 1,
+    atlas = 'ricksCrayonStash',
+    pos = { x = 0, y = 0 },
+    cost = 4,
+    unlocked = true,
+    discovered = true,
+    eternal_compat = false,
+    loc_vars = function(self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult, (G.GAME.probabilities.normal or 1), card.ability.extra.odds } }
+    end,
+    calculate = function(self, card, context)
+        if context.joker_main then
+        return {
+            message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
+            Xmult_mod = card.ability.extra.Xmult
+        }
+        end
+        if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
+            if pseudorandom('cavendish2') < G.GAME.probabilities.normal / card.ability.extra.odds then
+                G.E_MANAGER:add_event(Event({
+          func = function()
+            play_sound('tarot1')
+            card.T.r = -0.2
+            card:juice_up(0.3, 0.4)
+            card.states.drag.is = true
+            card.children.center.pinch.x = true
+            G.E_MANAGER:add_event(Event({
+              trigger = 'after',
+              delay = 0.3,
+              blockable = false,
+              func = function()
+                G.jokers:remove_card(card)
+                card:remove()
+                card = nil
+                return true;
+              end
+            }))
+            return true
+          end
+        }))
+        return {
+          message = 'SIGH!'
+        }
+      else
+        return {
+          message = 'Safe!'
+        }
+      end
+    end
+  end
+}
+
+SMODS.Joker{
+    key = 'hotTake', -- joker key
+    loc_txt = { -- local text
+        name = 'Jamie\'s Hot Take',
+        text = {
+            '{C:green}#1# in #2#{} chance',
+            'to downgrade',
+            'level of played',
+            '{C:attention}poker hand{}',
+            '{C:green}#1# in #3#{} chance',
+            'this card gains {X:mult,C:white} X#5# {} Mult',
+            '{C:inactive}(Currently {X:mult,C:white} X#4# {C:inactive} Mult)'
+        }
+    },
+    config = { extra = { odds = 5, odds2 = 2, Xmult = 1, Xmult_gain = 0.5, focus = card } },
+    rarity = 1,
+    atlas = 'hotTake',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 8,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { (G.GAME.probabilities.normal or 1), card.ability.extra.odds, card.ability.extra.odds2, card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } }
+            }
+        end
+        if context.before and not context.blueprint then
+            if pseudorandom('hotTake') < G.GAME.probabilities.normal / card.ability.extra.odds and G.GAME.hands[context.scoring_name].level > 1 then
+                return {
+                    level_up = -1,
+                    message = 'HOT TAKE!',
+                    colour = G.C.MULT,
+                    card = card
+                }
+            end
+            if pseudorandom('hotTake2') < G.GAME.probabilities.normal / card.ability.extra.odds2 then
+                card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+                return {
+                    message = 'GOOD TAKE!',
+                    colour = G.C.MULT,
+                    card = card
+                }
+            end
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'fox', -- joker key
+    loc_txt = { -- local text
+        name = 'Fox',
+        text = {
+            'OH HI MARK'
+        }
+    },
+    config = { extra = { money = 1 } },
+    rarity = 1,
+    atlas = 'fox',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 5,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.money } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                dollars = card.ability.extra.money,
+                message = 'OH HI MARK',
+                card = card,
+                sound = 'mldg_hiMark'
+            }
         end
     end
 }
