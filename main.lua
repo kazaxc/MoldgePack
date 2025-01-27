@@ -1315,8 +1315,7 @@ SMODS.Joker{
         end
         if context.joker_main then
             return {
-                chips = card.ability.extra.chips,
-                message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } }
+                chips = card.ability.extra.chips
             }
         end
         if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
@@ -1350,8 +1349,7 @@ SMODS.Joker{
     calculate = function (self, card, context)
         if context.joker_main then
             return {
-                chips = card.ability.extra.chips,
-                message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } }
+                chips = card.ability.extra.chips
             }
         end
         if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
