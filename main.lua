@@ -175,6 +175,27 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'nolem', -- atlas key
+    path = 'Nolem.png', -- path to the image
+    px = 73,
+    py = 97
+}
+
+SMODS.Atlas{
+    key = 'fishbreakfast', -- atlas key
+    path = 'fishebreakfast.png', -- path to the image
+    px = 73,
+    py = 97
+}
+
+SMODS.Atlas{
+    key = 'hypeTrain', -- atlas key
+    path = 'Hype_Train.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Sound{
     key = 'hiMark', -- sound key
     path = 'hi.ogg' -- path to the sound
@@ -183,6 +204,11 @@ SMODS.Sound{
 SMODS.Sound{
     key = 'glassBreak', -- sound key
     path = 'glass.ogg' -- path to the sound
+}
+
+SMODS.Sound{
+    key = 'choo-choo', -- sound key
+    path = 'choo-choo.ogg' -- path to the sound
 }
 
 SMODS.Joker{
@@ -659,7 +685,7 @@ SMODS.Joker{
     rarity = 3,
     atlas = 'ving',
     unlocked = true,
-    discovered = true,
+    discovered = false,
     blueprint_compat = true,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
@@ -715,7 +741,7 @@ SMODS.Joker{
     rarity = 1,
     atlas = 'ethan',
     unlocked = true,
-    discovered = true,
+    discovered = false,
     blueprint_compat = false,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
@@ -745,7 +771,7 @@ SMODS.Joker{
     rarity = 3,
     atlas = 'ben',
     unlocked = true,
-    discovered = true,
+    discovered = false,
     blueprint_compat = true,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
@@ -1060,7 +1086,7 @@ SMODS.Joker{
               end
             }))
             -- Sets the pool flag to true, meaning Gros Michel 2 doesn't spawn, and Cavendish 2 does.
-            G.GAME.pool_flags.gros_michel_extinct2 = true
+            G.GAME.pool_flags.ricksCrayon_extinct = true
             return {
               message = 'SIGH!'
             }
@@ -1197,12 +1223,13 @@ SMODS.Joker{
 SMODS.Joker{
     key = 'fox', -- joker key
     loc_txt = { -- local text
-        name = 'Fox',
+        name = 'Hade',
         text = {
-            'OH HI MARK'
+            '{C:mult}+#1#{} Mult for',
+            'each remaining {C:attention}discard{}'
         }
     },
-    config = { extra = { money = 1 } },
+    config = { extra = { mult = 10 } },
     rarity = 1,
     atlas = 'fox',
     unlocked = true,
@@ -1213,15 +1240,127 @@ SMODS.Joker{
     cost = 5,
     isActive = true,
     loc_vars = function (self, info_queue, card)
-        return { vars = { card.ability.extra.money } }
+        return { vars = { card.ability.extra.mult } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main and G.game.current_round.discards_left > 0 then
+            return {
+                mult_mod = card.ability.extra.mult * G.GAME.current_round.discards_left,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult * G.GAME.current_round.discards_left } },
+                card = card,
+                sound = 'mldg_hiMark'
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'nolem', -- joker key
+    loc_txt = { -- local text
+        name = 'Nolem',
+        text = {
+            'THOSE WHO NOSE',
+            'Sorry but I couldnt get this card to work lol',
+            'so it does nothing now!'
+        }
+    },
+    config = { extra = {mult = 10} },
+    rarity = 1,
+    atlas = 'nolem',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 5,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.mult } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return{
+                message = 'FUCK!',
+                card = card,
+                sound = 'mldg_glassBreak'
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'fishbreakfast', -- joker key
+    loc_txt = { -- local text
+        name = 'Fish Breakfast',
+        text = {
+            '{C:chips}+#1#{} Chips {C:attention}-#2#{} hand size each round'
+        }
+    },
+    config = { extra = { chips = 450, h_size = 2 } },
+    rarity = 1,
+    atlas = 'fishbreakfast',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 7,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.chips, card.ability.extra.h_size } }
+    end,
+    calculate = function (self, card, context)
+        if context.setting_blind then
+            G.hand:change_size(-card.ability.extra.h_size)
+        end
+        if context.joker_main then
+            return {
+                chips = card.ability.extra.chips,
+                message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } }
+            }
+        end
+        if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
+            G.hand:change_size(card.ability.extra.h_size)
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'hypeTrain', -- joker key
+    loc_txt = { -- local text
+        name = 'Hype Train',
+        text = {
+            '{C:chips}+#2#{} Chips each round',
+            '{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)'
+        }
+    },
+    config = { extra = { chips = 0, chips_gain = 50 } },
+    rarity = 1,
+    atlas = 'hypeTrain',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 8,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.chips, card.ability.extra.chips_gain } }
     end,
     calculate = function (self, card, context)
         if context.joker_main then
             return {
-                dollars = card.ability.extra.money,
-                message = 'OH HI MARK',
+                chips = card.ability.extra.chips,
+                message = localize { type = 'variable', key = 'a_chips', vars = { card.ability.extra.chips } }
+            }
+        end
+        if context.end_of_round and context.game_over == false and not context.repetition and not context.blueprint then
+            card.ability.extra.chips = card.ability.extra.chips + card.ability.extra.chips_gain
+            return {
+                message = 'CHOO CHOO!',
+                colour = G.C.CHIPS,
                 card = card,
-                sound = 'mldg_hiMark'
+                sound = 'mldg_choo-choo'
             }
         end
     end
