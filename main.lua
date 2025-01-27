@@ -1231,7 +1231,7 @@ SMODS.Joker{
             'each remaining {C:attention}discard{}'
         }
     },
-    config = { extra = { mult = 10 } },
+    config = { extra = { mult = 5 } },
     rarity = 1,
     atlas = 'fox',
     unlocked = true,
