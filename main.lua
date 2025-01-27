@@ -1243,7 +1243,7 @@ SMODS.Joker{
         return { vars = { card.ability.extra.mult } }
     end,
     calculate = function (self, card, context)
-        if context.joker_main and G.game.current_round.discards_left > 0 then
+        if context.joker_main and G.GAME.current_round.discards_left > 0 then
             return {
                 mult_mod = card.ability.extra.mult * G.GAME.current_round.discards_left,
                 message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult * G.GAME.current_round.discards_left } },
@@ -1259,12 +1259,12 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'Nolem',
         text = {
-            'THOSE WHO NOSE',
-            'Sorry but I couldnt get this card to work lol',
-            'so it does nothing now!'
+            '{C:mult}+#1#{} Mult',
+            'if played hand has',
+            'exactly {C:attention}2{} cards'
         }
     },
-    config = { extra = {mult = 10} },
+    config = { extra = {mult = 20} },
     rarity = 1,
     atlas = 'nolem',
     unlocked = true,
@@ -1278,11 +1278,10 @@ SMODS.Joker{
         return { vars = { card.ability.extra.mult } }
     end,
     calculate = function (self, card, context)
-        if context.joker_main then
-            return{
-                message = 'FUCK!',
-                card = card,
-                sound = 'mldg_glassBreak'
+        if context.joker_main and #context.full_hand == 2 then
+            return {
+                mult_mod = card.ability.extra.mult,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
             }
         end
     end
