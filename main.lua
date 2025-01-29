@@ -196,6 +196,41 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'left_arm', -- atlas key
+    path = 'left_arm.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'dennis_body', -- atlas key
+    path = 'dennis_the_forbidden_one.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'right_arm', -- atlas key
+    path = 'dennis-hand-of-x.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'left_leg', -- atlas key
+    path = 'dennisleftleg.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
+SMODS.Atlas{
+    key = 'right_leg', -- atlas key
+    path = 'right_leg.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Sound{
     key = 'hiMark', -- sound key
     path = 'hi.ogg' -- path to the sound
@@ -306,7 +341,7 @@ SMODS.Joker{
         }
     },
     config = { extra = { Xmult = 3, odds = 2 } },
-    rarity = 1,
+    rarity = 3,
     atlas = 'Jokers',
     unlocked = true,
     discovered = true,
@@ -375,7 +410,7 @@ SMODS.Joker{
                     message = 'MWAH!',
                     colour = G.C.MULT,
                     card = card
-                } 
+                }
             end
         end
     end
@@ -1298,7 +1333,7 @@ SMODS.Joker{
         }
     },
     config = { extra = { chips = 450, h_size = 2 } },
-    rarity = 1,
+    rarity = 2,
     atlas = 'fishbreakfast',
     unlocked = true,
     discovered = true,
@@ -1361,6 +1396,184 @@ SMODS.Joker{
                 card = card,
                 sound = 'mldg_choo-choo'
             }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'left_arm', -- joker key
+    loc_txt = { -- local text
+        name = 'Forbidden Dennis\' Left Arm',
+        text = {
+            '{X:mult,C:white} X#1# {} Mult for each',
+            'scored {C:attention}Moldge{} card'
+        }
+    },
+    config = { extra = { Xmult = 2 } },
+    rarity = 3,
+    atlas = 'left_arm',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult } }
+    end,
+    calculate = function (self, card, context)
+        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
+                card = card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'dennis_body', -- joker key
+    loc_txt = { -- local text
+        name = 'Forbidden Dennis\' Body',
+        text = {
+            '{C:chips}+#1#{} Chips for each',
+            'scored {C:attention}Moldge{} card'
+        }
+    },
+    config = { extra = { chips = 75 } },
+    rarity = 3,
+    atlas = 'dennis_body',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.chips } }
+    end,
+    calculate = function (self, card, context)
+        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
+            return {
+                chips = card.ability.extra.chips,
+                card = context.other_card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'right_arm', -- joker key
+    loc_txt = { -- local text
+        name = 'Forbidden Dennis\' Right Arm',
+        text = {
+            '{X:mult,C:white} X#1# {} Mult for each',
+            '{C:attention}Moldge{} card held in hand'
+        }
+    },
+    config = { extra = { Xmult = 1.5 } },
+    rarity = 3,
+    atlas = 'right_arm',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult } }
+    end,
+    calculate = function (self, card, context)
+        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.hand and not context.debuffed_hand then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
+                card = context.other_card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'left_leg', -- joker key
+    loc_txt = { -- local text
+        name = 'Forbidden Dennis\' Left Leg',
+        text = {
+            'Retrigger all played',
+            '{C:attention}Moldge{} cards'
+        }
+    },
+    config = { extra = { repetitions = 1 } },
+    rarity = 3,
+    atlas = 'left_leg',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    calculate = function (self, card, context)
+        if context.cardarea == G.play and context.repetition and not context.repetition_only and context.other_card.ability.name == 'm_mldg_moldge' then
+            return {
+                message = 'RAHHH!',
+                repetitions = card.ability.extra.repetitions,
+                card = context.other_card
+            }
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'right_leg', -- joker key
+    loc_txt = { -- local text
+        name = 'Forbidden Dennis\' Right Leg',
+        text = {
+            'Gains {X:mult,C:white} X#2# {} Mult',
+            'if played hand contains,',
+            'only {C:attention}Moldge{} cards',
+            '{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)'
+        }
+    },
+    config = { extra = { Xmult = 1, Xmult_gain = 0.5} },
+    rarity = 3,
+    atlas = 'right_leg',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 10,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                Xmult_mod = card.ability.extra.Xmult,
+                message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } }
+            }
+        end
+
+        if context.before and not context.blueprint then
+            local moldge_count = 0
+            for i = 1, #context.scoring_hand do
+                if context.scoring_hand[i].ability.name == 'm_mldg_moldge' then moldge_count = moldge_count + 1 end
+            end
+
+            if moldge_count == #context.scoring_hand then
+                card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+                return {
+                    message = 'FLUSH!',
+                    colour = G.C.MULT,
+                    card = card
+                }
+            end
         end
     end
 }
