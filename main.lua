@@ -246,6 +246,29 @@ SMODS.Sound{
     path = 'choo-choo.ogg' -- path to the sound
 }
 
+-- Code modified for use in this pack from DigitalDetective47: https://github.com/DigitalDetective47/strange-pencil/blob/36c671bc1fb17df6ae30f4a69e5224775cbeff94/jokers.lua#L69
+function forbidden_part_added(center, card, from_debuff)
+    if not (G.GAME.won or G.GAME.win_notified)
+    then
+        for k, v in ipairs({"j_mldg_left_arm", "j_mldg_right_arm", "j_mldg_dennis_body", "j_mldg_right_leg", "j_mldg_left_leg"}) do
+            if center.key ~= v and #SMODS.find_card(v) == 0 then
+                return
+            end
+        end
+        G.GAME.win_notified = true
+        G.E_MANAGER:add_event(Event({
+            trigger = 'immediate',
+            blocking = false,
+            blockable = false,
+            func = (function()
+                win_game()
+                G.GAME.won = true
+                return true
+            end)
+        }))
+    end
+end
+
 SMODS.Joker{
     key = 'appulrelia', -- joker key
     loc_txt = { -- local text
@@ -446,7 +469,8 @@ SMODS.Joker{
               return {
                 message = 'Nice Cock!',
                 chips = card.ability.extra.chips,
-                card = context.other_card
+                card = context.other_card,
+                focus = card
               }
             end
           end
@@ -1409,7 +1433,7 @@ SMODS.Joker{
             'scored {C:attention}Moldge{} card'
         }
     },
-    config = { extra = { Xmult = 2 } },
+    config = { extra = { Xmult = 2, focus = card } },
     rarity = 3,
     atlas = 'left_arm',
     unlocked = true,
@@ -1418,6 +1442,7 @@ SMODS.Joker{
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
+    add_to_deck = forbidden_part_added,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.Xmult } }
@@ -1425,9 +1450,11 @@ SMODS.Joker{
     calculate = function (self, card, context)
         if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
             return {
+                message = "SNAKE!",
                 Xmult_mod = card.ability.extra.Xmult,
                 message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
-                card = card
+                card = card,
+                focus = card
             }
         end
     end
@@ -1442,7 +1469,7 @@ SMODS.Joker{
             'scored {C:attention}Moldge{} card'
         }
     },
-    config = { extra = { chips = 75 } },
+    config = { extra = { chips = 75, focus = card } },
     rarity = 3,
     atlas = 'dennis_body',
     unlocked = true,
@@ -1451,6 +1478,7 @@ SMODS.Joker{
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
+    add_to_deck = forbidden_part_added,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.chips } }
@@ -1458,8 +1486,10 @@ SMODS.Joker{
     calculate = function (self, card, context)
         if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play then
             return {
+                message = 'GIMME THAT MOLDGE!',
                 chips = card.ability.extra.chips,
-                card = context.other_card
+                card = context.other_card,
+                focus = card
             }
         end
     end
@@ -1474,7 +1504,7 @@ SMODS.Joker{
             '{C:attention}Moldge{} card held in hand'
         }
     },
-    config = { extra = { Xmult = 1.5 } },
+    config = { extra = { Xmult = 1.5, focus = card } },
     rarity = 3,
     atlas = 'right_arm',
     unlocked = true,
@@ -1483,13 +1513,15 @@ SMODS.Joker{
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
+    add_to_deck = forbidden_part_added,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.Xmult } }
     end,
     calculate = function (self, card, context)
-        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.hand and not context.debuffed_hand then
+        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.hand and not context.debuffed_hand and not context.after and not context.end_of_round then
             return {
+                message = 'SWANS!',
                 Xmult_mod = card.ability.extra.Xmult,
                 message = localize { type = 'variable', key = 'a_xmult', vars = { card.ability.extra.Xmult } },
                 card = context.other_card
@@ -1507,7 +1539,7 @@ SMODS.Joker{
             '{C:attention}Moldge{} cards'
         }
     },
-    config = { extra = { repetitions = 1 } },
+    config = { extra = { repetitions = 1, focus = card } },
     rarity = 3,
     atlas = 'left_leg',
     unlocked = true,
@@ -1516,13 +1548,15 @@ SMODS.Joker{
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
+    add_to_deck = forbidden_part_added,
     isActive = true,
     calculate = function (self, card, context)
         if context.cardarea == G.play and context.repetition and not context.repetition_only and context.other_card.ability.name == 'm_mldg_moldge' then
             return {
-                message = 'RAHHH!',
+                message = 'RAHHH HAHAHAH!',
                 repetitions = card.ability.extra.repetitions,
-                card = context.other_card
+                card = context.other_card,
+                focus = card
             }
         end
     end
@@ -1539,7 +1573,7 @@ SMODS.Joker{
             '{C:inactive}(Currently {X:mult,C:white} X#1# {C:inactive} Mult)'
         }
     },
-    config = { extra = { Xmult = 1, Xmult_gain = 0.5} },
+    config = { extra = { Xmult = 1, Xmult_gain = 0.5, focus = card } },
     rarity = 3,
     atlas = 'right_leg',
     unlocked = true,
@@ -1548,6 +1582,7 @@ SMODS.Joker{
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
     cost = 10,
+    add_to_deck = forbidden_part_added,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
@@ -1569,7 +1604,7 @@ SMODS.Joker{
             if moldge_count == #context.scoring_hand then
                 card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
                 return {
-                    message = 'FLUSH!',
+                    message = 'MMMM MOLDGE!',
                     colour = G.C.MULT,
                     card = card
                 }
