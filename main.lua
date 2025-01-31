@@ -1377,7 +1377,7 @@ SMODS.Joker{
         return { vars = { card.ability.extra.chips, card.ability.extra.h_size } }
     end,
     calculate = function (self, card, context)
-        if context.setting_blind then
+        if context.setting_blind and not context.blueprint then
             G.hand:change_size(-card.ability.extra.h_size)
         end
         if context.joker_main then
