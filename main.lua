@@ -231,6 +231,13 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'scream', -- atlas key
+    path = 'scream.png', -- path to the image
+    px = 71,
+    py = 95
+}
+
 SMODS.Sound{
     key = 'hiMark', -- sound key
     path = 'hi.ogg' -- path to the sound
@@ -1609,6 +1616,47 @@ SMODS.Joker{
                     card = card
                 }
             end
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'scream', -- joker key
+    loc_txt = { -- local text
+        name = 'Gift of giving',
+        text = {
+            'Gains {C:mult}+#2#{} Mult for each',
+            'scored {C:attention}Moldge{} card',
+            '{C:inactive}(Currently {C:mult}+#1#{C:inactive} Mult)'
+        }
+    },
+    config = { extra = { mult = 0, mult_gain = 2, focus = card } },
+    rarity = 1,
+    atlas = 'scream',
+    unlocked = true,
+    discovered = true,
+    blueprint_compat = true,
+    allow_duplicates = false,
+    pos = { x = 0, y = 0 },
+    cost = 5,
+    isActive = true,
+    loc_vars = function (self, info_queue, card)
+        return { vars = { card.ability.extra.mult, card.ability.extra.mult_gain } }
+    end,
+    calculate = function (self, card, context)
+        if context.joker_main then
+            return {
+                mult_mod = card.ability.extra.mult,
+                message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
+            }
+        end
+        if context.individual and context.other_card.ability.name == 'm_mldg_moldge' and context.cardarea == G.play and not context.blueprint then
+            card.ability.extra.mult = card.ability.extra.mult + card.ability.extra.mult_gain
+            return {
+                message = 'GIFT SUBS!',
+                colour = G.C.MULT,
+                card = card
+            }
         end
     end
 }
