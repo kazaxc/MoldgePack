@@ -537,7 +537,7 @@ SMODS.Joker{
             '{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)',
         }
     },
-    config = { extra = { chips = 0, chip_gain = 8 } },
+    config = { extra = { chips = 60, chip_gain = 20 } },
     pos = { x = 0, y = 0 },
     cost = 4,
     rarity = 1,
@@ -981,7 +981,7 @@ SMODS.Consumable{
             'to {C:attention}Moldge{} cards'
         }
     },
-    config = { extra = { cards = 2 } },
+    config = { extra = { cards = 4 } },
     atlas = 'creation',
     pos = { x = 0, y = 0 },
     cost = 3,
@@ -1060,7 +1060,7 @@ SMODS.Joker{
             '{C:inactive}(Currently {C:chips}+#1#{C:inactive} Chips)'
         }
     },
-    config = { extra = { chips = 1, focus = card } },
+    config = { extra = { chips = 20, focus = card } },
     rarity = 1,
     atlas = 'gulper',
     unlocked = true,
@@ -1340,7 +1340,7 @@ SMODS.Joker{
     blueprint_compat = true,
     allow_duplicates = false,
     pos = { x = 0, y = 0 },
-    cost = 5,
+    cost = 4,
     isActive = true,
     loc_vars = function (self, info_queue, card)
         return { vars = { card.ability.extra.mult } }
@@ -1542,7 +1542,7 @@ SMODS.Joker{
     loc_txt = { -- local text
         name = 'Forbidden Dennis\' Left Leg',
         text = {
-            'Retrigger all played',
+            'Retrigger all scored',
             '{C:attention}Moldge{} cards'
         }
     },
@@ -1675,6 +1675,32 @@ SMODS.Enhancement{
     weight = 5,
     loc_vars = function(self, info_queue)
         return { vars = { self.config.money } }
+    end
+}
+
+SMODS.Back{
+    key = 'moldgeDeck', -- back key
+    name = 'Moldge Deck',
+    loc_txt = {
+        name = 'Moldge Deck',
+        text = {
+            'Start with a deck',
+            'full of {C:attention}Moldge{} cards'
+        }
+    },
+    atlas = 'Enhancers',
+    pos = { x = 0, y = 0 },
+    unlocked = true,
+    discovered = true,
+    apply = function(self, deck)
+        G.E_MANAGER:add_event(Event({
+            func = function()
+                for i = #G.playing_cards, 1, -1 do
+                    G.playing_cards[i]:set_ability(G.P_CENTERS['m_mldg_moldge'])
+                end
+                return true
+            end
+        }))
     end
 }
 
