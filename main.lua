@@ -238,6 +238,48 @@ SMODS.Atlas{
     py = 95
 }
 
+SMODS.Atlas{
+    key = 'jimbo', -- atlas key
+    path = 'jimbo.png', -- path to the image
+    px = 338,
+    py = 571
+}
+
+SMODS.Atlas{
+    key = 'hanging', -- atlas key
+    path = 'hanging.png', -- path to the image
+    px = 112,
+    py = 141
+}
+
+SMODS.Atlas{
+    key = 'oddtodd', -- atlas key
+    path = 'oddtodd.png', -- path to the image
+    px = 648,
+    py = 808
+}
+
+SMODS.Atlas{
+    key = 'burn', -- atlas key
+    path = 'burn.png', -- path to the image
+    px = 722,
+    py = 949
+}
+
+SMODS.Atlas{
+    key = 'cardsharp', -- atlas key
+    path = 'cardsharp.png', -- path to the image
+    px = 106,
+    py = 182
+}
+
+SMODS.Atlas{
+    key = 'cavendish', -- atlas key
+    path = 'cavendish.png', -- path to the image
+    px = 107,
+    py = 171
+}
+
 SMODS.Sound{
     key = 'hiMark', -- sound key
     path = 'hi.ogg' -- path to the sound
@@ -275,6 +317,53 @@ function forbidden_part_added(center, card, from_debuff)
         }))
     end
 end
+
+SMODS.Joker:take_ownership('joker',
+{
+    atlas = 'jimbo',
+    pos = { x = 0, y = 0 },
+},
+true)
+
+SMODS.Joker:take_ownership( 'hanging_chad',
+{
+    atlas = 'hanging',
+    pos = { x = 0, y = 0 },
+},
+true
+)
+
+SMODS.Joker:take_ownership( 'odd_todd',
+{
+    atlas = 'oddtodd',
+    pos = { x = 0, y = 0 },
+},
+true
+)
+
+SMODS.Joker:take_ownership( 'burnt',
+{
+    atlas = 'burn',
+    pos = { x = 0, y = 0 },
+},
+true
+)
+
+SMODS.Joker:take_ownership( 'card_sharp',
+{
+    atlas = 'cardsharp',
+    pos = { x = 0, y = 0 },
+},
+true
+)
+
+SMODS.Joker:take_ownership( 'cavendish',
+{
+    atlas = 'cavendish',
+    pos = { x = 0, y = 0 },
+},
+true
+)
 
 SMODS.Joker{
     key = 'appulrelia', -- joker key
